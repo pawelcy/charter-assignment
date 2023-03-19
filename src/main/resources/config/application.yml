@@ -1,0 +1,142 @@
+custom:
+  cors:
+    allow-credentials: true
+    allowed-headers: "*"
+    allowed-methods: DELETE, HEAD, GET, OPTIONS, PATCH, POST, PUT
+    allowed-origin-patterns: "*"
+    exposed-headers: "*"
+    max-age: 3600s
+info:
+  app:
+    name: "@name@"
+    version: "@version@"
+logging:
+  level:
+    root: info
+    org:
+      hibernate:
+        SQL: trace
+        stat: trace
+        type:
+          descriptor:
+            sql: trace
+  file:
+    name: ${logging.file.path}/log.log
+    path: logs
+management:
+  endpoint:
+    health:
+      show-details: always
+    shutdown:
+      enabled: true
+  endpoints:
+    web:
+      base-path: /actuator
+      cors:
+        allow-credentials: true
+        allowed-headers: "*"
+        allowed-methods: DELETE, HEAD, GET, OPTIONS, PATCH, POST, PUT
+        allowed-origin-patterns: "*"
+        exposed-headers: "*"
+        max-age: 3600s
+      exposure:
+        include: "*"
+  httpexchanges:
+    recording:
+      include: REQUEST_HEADERS, REMOTE_ADDRESS, RESPONSE_HEADERS, TIME_TAKEN
+  info:
+    env:
+      enabled: true
+    git:
+      mode: full
+    java:
+      enabled: true
+    os:
+      enabled: true
+server:
+  compression:
+    enabled: true
+  error:
+    include-binding-errors: always
+    include-exception: true
+    include-message: always
+    include-stacktrace: always
+  http2:
+    enabled: true
+  port: 9999
+  servlet:
+    application-display-name: ${spring.application.name}
+    encoding:
+      charset: UTF-8
+      force: true
+  tomcat:
+    connection-timeout: -1
+  shutdown: graceful
+spring:
+  application:
+    name: "@name@"
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      auto-commit: false
+      connection-timeout: 60000
+      maximum-pool-size: 24
+    password: 12345
+    url: jdbc:postgresql://localhost:5432/charter
+    username: postgres
+  jackson:
+    default-property-inclusion: NON_EMPTY
+    deserialization:
+      FAIL_ON_UNKNOWN_PROPERTIES: true
+    mapper:
+      SORT_PROPERTIES_ALPHABETICALLY: true
+    parser:
+      ALLOW_UNQUOTED_CONTROL_CHARS: true
+    serialization:
+      INDENT_OUTPUT: true
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        connection:
+          provider_disables_autocommit: true
+        default_schema: ${spring.liquibase.default-schema}
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+        generate_statistics: true
+        jdbc:
+          batch_size: 50
+          batch_versioned_data: true
+          time_zone: UTC
+        order_inserts: true
+        order_updates: true
+        query:
+          in_clause_parameter_padding: true
+        session:
+          events:
+            log:
+              LOG_QUERIES_SLOWER_THAN_MS: 10
+    show-sql: false
+  liquibase:
+    default-schema: public
+  main:
+    banner-mode: off
+springdoc:
+  group-configs:
+    - group: actuator
+      paths-to-match: ${management.endpoints.web.base-path}/**
+    - group: ${spring.application.name}
+      packages-to-scan: com.charter
+  show-actuator: true
+  swagger-ui:
+    disable-swagger-default-url: true
+    displayOperationId: true
+    displayRequestDuration: true
+    docExpansion: list
+    filter: true
+    operationsSorter: alpha
+    showCommonExtensions: true
+    tagsSorter: alpha
+    urlsPrimaryName: ${spring.application.name}
+  writer-with-default-pretty-printer: true

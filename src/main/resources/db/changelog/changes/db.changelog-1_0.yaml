@@ -1,0 +1,124 @@
+databaseChangeLog:
+  - changeSet:
+      author: liquibase
+      id: '1_0'
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  name: cus_age
+                  type: int
+                  constraints:
+                    nullable: false
+              - column:
+                  name: cus_created_by
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: cus_created_date
+                  type: timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: cus_email_address
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: cus_firstname
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  autoIncrement: true
+                  name: cus_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+              - column:
+                  name: cus_last_modified_by
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: cus_last_modified_date
+                  type: timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: cus_lastname
+                  type: varchar(255)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: cus_version
+                  type: bigint
+                  constraints:
+                    nullable: false
+            remarks: Customer
+            tableName: p_customer
+        - createTable:
+            columns:
+              - column:
+                  name: pur_amount
+                  type: currency
+                  constraints:
+                    nullable: false
+              - column:
+                  name: pur_created_by
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: pur_created_date
+                  type: timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: pur_cus_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: pur_date_time
+                  type: timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: pur_description
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  autoIncrement: true
+                  name: pur_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+              - column:
+                  name: pur_last_modified_by
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: pur_last_modified_date
+                  type: timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: pur_version
+                  type: bigint
+                  constraints:
+                    nullable: false
+            remarks: Purchase
+            tableName: p_purchase
+        - addForeignKeyConstraint:
+            baseColumnNames: pur_cus_id
+            baseTableName: p_purchase
+            constraintName: fk_pur_cus_id
+            referencedColumnNames: cus_id
+            referencedTableName: p_customer
+            validate: true

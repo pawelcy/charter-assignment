@@ -1,0 +1,13 @@
+spring:
+  datasource:
+    driver-class-name: org.h2.Driver
+    password: 12345
+    url: jdbc:h2:mem:charter;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=TRUE
+    username: admin
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+  liquibase:
+    default-schema: public
+    drop-first: true
