@@ -5,11 +5,13 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
+@ActiveProfiles("junit")
 @SpringBootTest
 class RewardUtilsTest {
 
-  @DisplayName("Update Should Failed with 404")
+  @DisplayName("Calculate Reward Should Calculate Above First Limit")
   @Test
   void givenCalculateReward_shouldCalculateAboveFirstLimit() {
     var reward = RewardUtils.calculateReward(BigDecimal.valueOf(12000, 2));
@@ -17,7 +19,7 @@ class RewardUtilsTest {
     Assertions.assertEquals(90, reward);
   }
 
-  @DisplayName("Update Should Failed with 404")
+  @DisplayName("Calculate Reward Should Calculate Equals First Limit")
   @Test
   void givenCalculateReward_shouldCalculateEqualsFirstLimit() {
     var reward = RewardUtils.calculateReward(BigDecimal.valueOf(10000, 2));
@@ -25,7 +27,7 @@ class RewardUtilsTest {
     Assertions.assertEquals(50, reward);
   }
 
-  @DisplayName("Update Should Failed with 404")
+  @DisplayName("Calculate Reward Should Calculate Equals Second Limit")
   @Test
   void givenCalculateReward_shouldCalculateEqualsSecondLimit() {
     var reward = RewardUtils.calculateReward(BigDecimal.valueOf(5000, 2));

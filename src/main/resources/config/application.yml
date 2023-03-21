@@ -58,9 +58,9 @@ server:
     enabled: true
   error:
     include-binding-errors: always
-    include-exception: true
+#    include-exception: false
     include-message: always
-    include-stacktrace: always
+    include-stacktrace: on_param
   http2:
     enabled: true
   port: 9999

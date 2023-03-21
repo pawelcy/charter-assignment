@@ -1,5 +1,6 @@
 package com.charter.purchase;
 
+import com.charter.commons.exception.NotFoundRuntimeException;
 import com.charter.customer.Customer;
 import com.charter.customer.CustomerRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -36,7 +37,7 @@ class PurchaseControllerEndToEndTest {
   @Autowired private PurchaseRepository purchaseRepository;
 
   @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
-  @DisplayName("Get Page Should Succeed with 200")
+  @DisplayName("Get Page Should Succeed With 200")
   @Test
   void givenGetPage_shouldSucceedWith200() throws Exception {
     var customer =
@@ -76,7 +77,7 @@ class PurchaseControllerEndToEndTest {
   }
 
   @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
-  @DisplayName("Get Page Should Succeed with 200")
+  @DisplayName("Get Page Should Succeed With 200")
   @Test
   void givenGetPageFilterByCustomerId_shouldSucceedWith200() throws Exception {
     var customer =
@@ -142,7 +143,7 @@ class PurchaseControllerEndToEndTest {
   }
 
   @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
-  @DisplayName("Add Should Succeed with 201")
+  @DisplayName("Add Should Succeed With 201")
   @Test
   void givenAdd_shouldSucceedWith201() throws Exception {
     var customer =
@@ -190,14 +191,16 @@ class PurchaseControllerEndToEndTest {
   }
 
   @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
-  @DisplayName("Add Should Failed with 404")
+  @DisplayName("Add Should Failed With 404")
   @Test
   void givenAdd_shouldFailedWith404() throws Exception {
+    var customerId = 1L;
+
     var body =
         this.objectMapper
             .createObjectNode()
             .put("amount", 120)
-            .put("customerId", 1L)
+            .put("customerId", customerId)
             .put("dateTime", "2023-03-17T15:31:03")
             .put("description", "Some purchase.");
 
@@ -208,7 +211,16 @@ class PurchaseControllerEndToEndTest {
                 .content(body.toPrettyString())
                 .contentType(MediaType.APPLICATION_JSON))
         .andDo(MockMvcResultHandlers.log())
-        .andExpect(MockMvcResultMatchers.status().isNotFound());
+        .andExpect(MockMvcResultMatchers.status().isNotFound())
+        .andExpect(
+            result ->
+                Assertions.assertTrue(
+                    result.getResolvedException() instanceof NotFoundRuntimeException))
+        .andExpect(
+            result ->
+                Assertions.assertEquals(
+                    String.format("Customer with id: %d not found", customerId),
+                    result.getResolvedException().getMessage()));
   }
 
   @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
@@ -355,11 +367,13 @@ class PurchaseControllerEndToEndTest {
 
     this.purchaseRepository.save(purchase);
 
+    var customerId = 2L;
+
     var body =
         this.objectMapper
             .createObjectNode()
             .put("amount", 90)
-            .put("customerId", 2L)
+            .put("customerId", customerId)
             .put("dateTime", "2023-02-16T14:21:02")
             .put("description", "Additional purchase.");
 
@@ -370,13 +384,24 @@ class PurchaseControllerEndToEndTest {
                 .content(body.toPrettyString())
                 .contentType(MediaType.APPLICATION_JSON))
         .andDo(MockMvcResultHandlers.log())
-        .andExpect(MockMvcResultMatchers.status().isNotFound());
+        .andExpect(MockMvcResultMatchers.status().isNotFound())
+        .andExpect(
+            result ->
+                Assertions.assertTrue(
+                    result.getResolvedException() instanceof NotFoundRuntimeException))
+        .andExpect(
+            result ->
+                Assertions.assertEquals(
+                    String.format("Customer with id: %d not found", customerId),
+                    result.getResolvedException().getMessage()));
   }
 
   @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
   @DisplayName("Update Should Failed With 404")
   @Test
   void givenUpdate_shouldFailedWith404() throws Exception {
+    var id = 1L;
+
     var body =
         this.objectMapper
             .createObjectNode()
@@ -387,16 +412,25 @@ class PurchaseControllerEndToEndTest {
 
     this.mockMvc
         .perform(
-            MockMvcRequestBuilders.put("/api/v1/purchase/{id}", 1L)
+            MockMvcRequestBuilders.put("/api/v1/purchase/{id}", id)
                 .accept(MediaType.APPLICATION_JSON)
                 .content(body.toPrettyString())
                 .contentType(MediaType.APPLICATION_JSON))
         .andDo(MockMvcResultHandlers.log())
-        .andExpect(MockMvcResultMatchers.status().isNotFound());
+        .andExpect(MockMvcResultMatchers.status().isNotFound())
+        .andExpect(
+            result ->
+                Assertions.assertTrue(
+                    result.getResolvedException() instanceof NotFoundRuntimeException))
+        .andExpect(
+            result ->
+                Assertions.assertEquals(
+                    String.format("Purchase with id: %d not found", id),
+                    result.getResolvedException().getMessage()));
   }
 
   @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
-  @DisplayName("Delete Should Succeed with 204")
+  @DisplayName("Delete Should Succeed With 204")
   @Test
   void givenDelete_shouldSucceedWith204() throws Exception {
     var customer =
@@ -427,7 +461,7 @@ class PurchaseControllerEndToEndTest {
   }
 
   @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
-  @DisplayName("Delete Should Failed with 404")
+  @DisplayName("Delete Should Failed With 404")
   @Test
   void givenDelete_shouldFailedWith404() throws Exception {
     var id = 1L;
@@ -437,6 +471,15 @@ class PurchaseControllerEndToEndTest {
             MockMvcRequestBuilders.delete("/api/v1/purchase/{id}", id)
                 .accept(MediaType.APPLICATION_JSON))
         .andDo(MockMvcResultHandlers.log())
-        .andExpect(MockMvcResultMatchers.status().isNotFound());
+        .andExpect(MockMvcResultMatchers.status().isNotFound())
+        .andExpect(
+            result ->
+                Assertions.assertTrue(
+                    result.getResolvedException() instanceof NotFoundRuntimeException))
+        .andExpect(
+            result ->
+                Assertions.assertEquals(
+                    String.format("Purchase with id: %d not found", id),
+                    result.getResolvedException().getMessage()));
   }
 }

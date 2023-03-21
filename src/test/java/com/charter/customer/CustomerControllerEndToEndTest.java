@@ -1,5 +1,6 @@
 package com.charter.customer;
 
+import com.charter.commons.exception.NotFoundRuntimeException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.nio.charset.StandardCharsets;
 import org.junit.jupiter.api.Assertions;
@@ -28,7 +29,7 @@ class CustomerControllerEndToEndTest {
   @Autowired private ObjectMapper objectMapper;
 
   @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
-  @DisplayName("Get Page Should Succeed with 200")
+  @DisplayName("Get Page Should Succeed With 200")
   @Test
   void givenGetPage_shouldSucceedWith200() throws Exception {
     var customer =
@@ -57,7 +58,7 @@ class CustomerControllerEndToEndTest {
   }
 
   @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
-  @DisplayName("Add Should Succeed with 201")
+  @DisplayName("Add Should Succeed With 201")
   @Test
   void givenAdd_shouldSucceedWith201() throws Exception {
     var body =
@@ -97,7 +98,7 @@ class CustomerControllerEndToEndTest {
   }
 
   @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
-  @DisplayName("Update Should Succeed with 200")
+  @DisplayName("Update Should Succeed With 200")
   @Test
   void givenUpdate_shouldSucceedWith200() throws Exception {
     var customer =
@@ -143,7 +144,7 @@ class CustomerControllerEndToEndTest {
   }
 
   @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
-  @DisplayName("Update Should Failed with 404")
+  @DisplayName("Update Should Failed With 404")
   @Test
   void givenUpdate_shouldFailedWith404() throws Exception {
     var id = 1L;
@@ -163,7 +164,16 @@ class CustomerControllerEndToEndTest {
                 .content(body.toPrettyString())
                 .contentType(MediaType.APPLICATION_JSON))
         .andDo(MockMvcResultHandlers.log())
-        .andExpect(MockMvcResultMatchers.status().isNotFound());
+        .andExpect(MockMvcResultMatchers.status().isNotFound())
+        .andExpect(
+            result ->
+                Assertions.assertTrue(
+                    result.getResolvedException() instanceof NotFoundRuntimeException))
+        .andExpect(
+            result ->
+                Assertions.assertEquals(
+                    String.format("Customer with id: %d not found", id),
+                    result.getResolvedException().getMessage()));
   }
 
   @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
@@ -188,7 +198,7 @@ class CustomerControllerEndToEndTest {
   }
 
   @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
-  @DisplayName("Delete Should Failed with 404")
+  @DisplayName("Delete Should Failed With 404")
   @Test
   void givenDelete_shouldFailedWith404() throws Exception {
     var id = 1L;
@@ -198,6 +208,15 @@ class CustomerControllerEndToEndTest {
             MockMvcRequestBuilders.delete("/api/v1/customer/{id}", id)
                 .accept(MediaType.APPLICATION_JSON))
         .andDo(MockMvcResultHandlers.log())
-        .andExpect(MockMvcResultMatchers.status().isNotFound());
+        .andExpect(MockMvcResultMatchers.status().isNotFound())
+        .andExpect(
+            result ->
+                Assertions.assertTrue(
+                    result.getResolvedException() instanceof NotFoundRuntimeException))
+        .andExpect(
+            result ->
+                Assertions.assertEquals(
+                    String.format("Customer with id: %d not found", id),
+                    result.getResolvedException().getMessage()));
   }
 }
